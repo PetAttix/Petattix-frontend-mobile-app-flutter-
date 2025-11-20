@@ -171,12 +171,12 @@ class ProductController extends GetxController {
     };
 
     print("body---------last test${body}");
-    final response = await ApiClient.putMultipartData(
+    final response = await ApiClient.patchMultipartData(
         "${ApiConstants.product}/${productId?? ""}", body,
         multipartBody: photoList);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      ToastMessageHelper.showToastMessage(context, "Product post successful");
+      ToastMessageHelper.showToastMessage(context, "Product edit successful");
 
       productEditLoading(false);
     } else {

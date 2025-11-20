@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:petattix/services/api_constants.dart';
 import 'package:petattix/views/widgets/cachanetwork_image.dart';
 import 'package:petattix/views/widgets/custom_app_bar.dart';
 
@@ -38,6 +39,9 @@ class _EditMyProductScreentState extends State<EditMyProductScreent> {
   TextEditingController brandCtrl = TextEditingController();
   TextEditingController sizeCtrl = TextEditingController();
   TextEditingController productIdCtrl = TextEditingController();
+
+
+  TextEditingController imagesCtrl = TextEditingController();
 
 
 
@@ -77,7 +81,6 @@ class _EditMyProductScreentState extends State<EditMyProductScreent> {
   final places = GoogleMapsPlaces(
       apiKey: "AIzaSyA-Iri6x5mzNv45XO3a-Ew3z4nvF4CdYo0");
 
-  String productImage = "";
 
 
   @override
@@ -101,6 +104,7 @@ class _EditMyProductScreentState extends State<EditMyProductScreent> {
         stateCtrl.text = product.collectionAddress?.city ?? '';
         postalCodeCtrl.text = product.collectionAddress?.postalCode ?? '';
         countryTitleCtrl.text = product.collectionAddress?.country ?? '';
+        imagesCtrl.text = product.images!.isEmpty ? "" : product.images?.first.image ?? "";
 
 
         heightCtrl.text = product.height ?? "";
@@ -108,10 +112,6 @@ class _EditMyProductScreentState extends State<EditMyProductScreent> {
         lengthCtrl.text = product.length ?? "";
         widthCtrl.text = product.width ?? "";
 
-
-        setState(() {
-          productImage = product.images?.first.image  ?? "";
-        });
 
 
 
@@ -134,90 +134,123 @@ class _EditMyProductScreentState extends State<EditMyProductScreent> {
                 SizedBox(height: 10.h),
 
 
-                Container(
-                  height: 230.h,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    image: const DecorationImage(
-                      image: AssetImage("assets/images/uploadImage.png"),
-                      fit: BoxFit.cover,
+                GestureDetector(
+                   onTap: _pickImages,
+                  child: Container(
+                    height: 230.h,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      image: const DecorationImage(
+                        image: AssetImage("assets/images/uploadImage.png"),
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.circular(12.r),
                     ),
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                  child:  _images.isEmpty
-                      ?  Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      // content ke chhoto kore maje rakhbe
-                      children: [
-                        GestureDetector(
-                          onTap: _pickImages,
-                          child: Assets.icons.uploadPlusIcon
+                    child:
+
+                    _images.isEmpty && imagesCtrl.text.isNotEmpty ?
+
+                        Stack(
+                          children: [
+
+                            CustomNetworkImage(imageUrl: "${ApiConstants.imageBaseUrl}/${imagesCtrl.text}"),
+
+
+                            Positioned(
+                              top: 8.h,
+                              right: 8.w,
+                              child: GestureDetector(
+                                onTap: () {
+                                  imagesCtrl.text = "";
+                                  setState(() {
+
+                                  });
+                                },
+                                child: CircleAvatar(
+                                  radius: 14.r,
+                                  backgroundColor: AppColors.primaryColor,
+                                  child: Icon(
+                                      Icons.close, size: 14.r, color: Colors.white),
+                                ),
+                              ),
+                            ),
+
+                          ],
+                        ) :
+
+
+                    _images.isEmpty
+
+                        ?  Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Assets.icons.uploadPlusIcon
                               .svg(width: 44.w, height: 44.h),
-                        ),
-                        SizedBox(height: 10.h),
-                        const Text("Upload up to 5 images"),
-                      ],
-                    ),
-                  )
-                      : Center(
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        // Image
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10.r),
-                          child: Image.file(
-                            _images[_currentIndex],
-                            width: double.infinity,
-                            height: double.infinity,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-
-                        // Left Arrow
-                        Positioned(
-                          left: 8.w,
-                          child: GestureDetector(
-                            onTap: _prevImage,
-                            child: CircleAvatar(
-                              radius: 14.r,
-                              backgroundColor: Colors.black38,
-                              child: Icon(
-                                  Icons.arrow_left, color: Colors.white),
+                          SizedBox(height: 10.h),
+                          const Text("Upload up to 5 images"),
+                        ],
+                      ),
+                    )
+                        : Center(
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // Image
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10.r),
+                            child: Image.file(
+                              _images[_currentIndex],
+                              width: double.infinity,
+                              height: double.infinity,
+                              fit: BoxFit.cover,
                             ),
                           ),
-                        ),
 
-                        // Right Arrow
-                        Positioned(
-                          right: 8.w,
-                          child: GestureDetector(
-                            onTap: _nextImage,
-                            child: CircleAvatar(
-                              radius: 14.r,
-                              backgroundColor: Colors.black38,
-                              child: Icon(
-                                  Icons.arrow_right, color: Colors.white),
+                          // Left Arrow
+                          Positioned(
+                            left: 8.w,
+                            child: GestureDetector(
+                              onTap: _prevImage,
+                              child: CircleAvatar(
+                                radius: 14.r,
+                                backgroundColor: Colors.black38,
+                                child: Icon(
+                                    Icons.arrow_left, color: Colors.white),
+                              ),
                             ),
                           ),
-                        ),
 
-                        // Remove Icon
-                        Positioned(
-                          top: 8.h,
-                          right: 8.w,
-                          child: GestureDetector(
-                            onTap: () => _removeImage(_currentIndex),
-                            child: CircleAvatar(
-                              radius: 14.r,
-                              backgroundColor: AppColors.primaryColor,
-                              child: Icon(
-                                  Icons.close, size: 14.r, color: Colors.white),
+                          // Right Arrow
+                          Positioned(
+                            right: 8.w,
+                            child: GestureDetector(
+                              onTap: _nextImage,
+                              child: CircleAvatar(
+                                radius: 14.r,
+                                backgroundColor: Colors.black38,
+                                child: Icon(
+                                    Icons.arrow_right, color: Colors.white),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+
+                          // Remove Icon
+                          Positioned(
+                            top: 8.h,
+                            right: 8.w,
+                            child: GestureDetector(
+                              onTap: () => _removeImage(_currentIndex),
+                              child: CircleAvatar(
+                                radius: 14.r,
+                                backgroundColor: AppColors.primaryColor,
+                                child: Icon(
+                                    Icons.close, size: 14.r, color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -591,7 +624,7 @@ class _EditMyProductScreentState extends State<EditMyProductScreent> {
                       title: "Edit Product",
                       onpress: () {
                         if (forKey.currentState!.validate()) {
-                          if (_images.length != 0) {
+                          // if (_images.length != 0) {
                             productController.editProduct(
                                 productId: productIdCtrl.text,
                                 context: context,
@@ -617,13 +650,12 @@ class _EditMyProductScreentState extends State<EditMyProductScreent> {
                                 houseNumber: houseNumberCtrl.text,
                                 postalCode: postalCodeCtrl.text,
                                 carrer_type: "collection_address"
-
-
                             );
-                          } else {
-                            ToastMessageHelper.showToastMessage(
-                                context, "Please select your product images", title: "Warning");
-                          }
+                        //   }
+                        // else {
+                        //     ToastMessageHelper.showToastMessage(
+                        //         context, "Please select your product images", title: "Warning");
+                        //   }
                         }
                       }),
                 ),
@@ -642,6 +674,7 @@ class _EditMyProductScreentState extends State<EditMyProductScreent> {
   List<File> _images = [];
 
   int _currentIndex = 0;
+
 
   Future<void> _pickImages() async {
     final List<XFile>? picked = await _picker.pickMultiImage();

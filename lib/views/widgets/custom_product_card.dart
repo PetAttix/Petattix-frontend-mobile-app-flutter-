@@ -60,10 +60,11 @@ class CustomProductCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      flex: 4,
+                      flex: 3,
                       child: Padding(
                           padding: EdgeInsets.all(8.r),
                           child: CustomNetworkImage(
+                            width: double.infinity,
                               height: 105.h,
                               borderRadius: BorderRadius.circular(10.r),
                               imageUrl:
@@ -80,17 +81,27 @@ class CustomProductCard extends StatelessWidget {
                             // Title
 
                             Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Assets.icons.titleIcon.image(),
+                                Padding(
+                                  padding:  EdgeInsets.only(top: 3.h),
+                                  child: Assets.icons.titleIcon.image(),
+                                ),
                                 Expanded(
                                   child: CustomText(
                                     textAlign: TextAlign.start,
                                       text: " $title",
+                                      maxline: 2,
                                       fontSize: 12.h,
+                                      fontWeight: FontWeight.w600,
                                       color: Colors.black),
                                 ),
                               ],
                             ),
+
+
+                            SizedBox(height: 5.5.h),
+
 
                             Row(
                               children: [
@@ -105,15 +116,20 @@ class CustomProductCard extends StatelessWidget {
                             SizedBox(height: 4.h),
 
                             Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(Icons.location_on_outlined,
-                                    size: 14.h),
+                                Padding(
+                                  padding:  EdgeInsets.only(top: 3.h),
+                                  child: Icon(Icons.location_on_outlined,
+                                      size: 14.h),
+                                ),
                                 SizedBox(
                                   width: 130.w,
                                   child: CustomText(
                                     textAlign: TextAlign.start,
-                                      text: "$address",
+                                      text: getLastTwoWords(address),
                                       fontSize: 12.h,
+                                      maxline: 3,
                                       color: Colors.black),
                                 ),
                               ],
@@ -157,5 +173,19 @@ class CustomProductCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+
+  String getLastTwoWords(String? address) {
+    if (address == null || address.trim().isEmpty) return "";
+
+    List<String> words = address
+        .replaceAll(".", "")
+        .trim()
+        .split(" ");
+
+    if (words.length < 2) return address;
+
+    return "${words[words.length - 2]} ${words.last}";
   }
 }

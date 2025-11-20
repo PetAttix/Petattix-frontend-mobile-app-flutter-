@@ -8,6 +8,7 @@ import 'package:petattix/views/widgets/custom_text.dart';
 import 'package:petattix/views/widgets/custom_text_field.dart';
 
 import '../../../core/app_constants/app_colors.dart';
+import '../../../core/config/app_route.dart';
 
 class ChangePasswordScreen extends StatelessWidget {
   ChangePasswordScreen({super.key});
@@ -71,7 +72,13 @@ class ChangePasswordScreen extends StatelessWidget {
             ),
             Align(
                 alignment: Alignment.centerRight,
-                child: CustomText(text: "Forget Password")),
+                child: GestureDetector(
+                    onTap: (){
+                      Get.toNamed(AppRoutes.forgotScreen, arguments: {
+                        "email" : ""
+                      });
+                    },
+                    child: CustomText(text: "Forget Password"))),
             Spacer(),
             CustomButton(
                 title: "Update Password",

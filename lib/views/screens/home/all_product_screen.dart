@@ -227,13 +227,13 @@ class _AllProductScreenState extends State<AllProductScreen> {
                                 crossAxisCount: 2,
                                 crossAxisSpacing: 10,
                                 mainAxisSpacing: 10,
-                                childAspectRatio: 0.868,
+                                 childAspectRatio: 0.798,
                               ),
                               itemBuilder: (context, index) {
                                 var product =
                                     productController.allProduct[index];
                                 return CustomProductCard(
-                                  image: "${product.images?[0].image}",
+                                  image: product.images!.isEmpty ? "" : "${product.images?[0].image}",
                                   index: index,
                                   isFavorite: true,
                                   title: "${product.productName}",
